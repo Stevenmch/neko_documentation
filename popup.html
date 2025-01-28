@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Mi extensión</title>
-    <meta charset="UTF-8" />
-    <style>
-      body {
-        width: 600px;
-        height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-      }
-    </style>
-  </head>
-  <body>
-    <div>Hola desde mi extensión</div>
-
-    <button id="cambiar-mensaje">Cambiar mensaje</button>
-
-    <script src="my_script.js"></script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice to Text</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    #output {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h3>Voice to Text</h3>
+  <button id="start">🎙️ Start Recording</button>
+  <button id="stop" style="display: none;">🛑 Stop Recording</button>
+  <p id="output">Your text will appear here...</p>
+  <script src="popup.js"></script>
+</body>
 </html>
