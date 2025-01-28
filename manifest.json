@@ -1,12 +1,9 @@
 {
-    "manifest_version": 3,
-    "name": "Mi Primera Extension de Chrome",
-    "version": "1.0",
-    "description": "Esta es la descripción de mi extensión",
-    "icons": {
-      "128": "logo.png"
-    },
-    "action": {
-      "default_popup": "popup.html"
-    }
+  "manifest_version": 3,
+  "name": "Voice to Text",
+  "version": "1.0",
+  "description": "Convierte la voz a texto usando Web Speech API.",
+  "action": {
+    "default_popup": "popup.html"
   }
+}
