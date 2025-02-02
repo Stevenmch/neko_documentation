@@ -1,6 +1,20 @@
 // Verifica compatibilidad con SpeechRecognition
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+// Usar el sdk de aws
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1033.0.min.js"></script>
+
+// Configura las credenciales (Usar Cognito o IAM con permisos adecuados)
+AWS.config.update({
+  accessKeyId: "",
+  secretAccessKey: "",
+  region: "us-east-1" // Cambia según tu región
+});
+
+// Instancia de S3
+const s3 = new AWS.S3();
+
+
 if (!SpeechRecognition) {
   alert("Tu navegador no soporta el reconocimiento de voz.");
 } else {
