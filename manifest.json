@@ -6,5 +6,8 @@
   "action": {
     "default_popup": "popup.html"
   },
-  "content_security_policy": "script-src 'self' https://sdk.amazonaws.com; object-src 'self'"
+  "content_security_policy": {
+  "extension_pages": "script-src 'self'; object-src 'self';"
+  }
 }
+
