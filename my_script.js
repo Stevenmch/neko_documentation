@@ -9,6 +9,7 @@ if (!SpeechRecognition) {
     recognition.interimResults = false;
 
     let isRecording = false;
+    let accumulatedText = "";
     const startButton = document.getElementById("startButton");
     const stopButton = document.getElementById("stopButton");
     const output = document.getElementById("output");
@@ -28,6 +29,7 @@ if (!SpeechRecognition) {
         console.log("Botón de inicio clickeado");
         if (isRecording) return;
         isRecording = true;
+        accumulatedText = "";
         recognition.start();
         output.innerText = "Escuchando...";
     });
@@ -37,28 +39,19 @@ if (!SpeechRecognition) {
         isRecording = false;
         recognition.stop();
         output.innerText += "\nGrabación detenida.";
+
+        // Aqui debe estar el condicional pero no se porque
+        if (accumulatedText.trim() !== "") {
+            subirTextoAS3(accumulatedText); // Subir solo cuando se detiene
+        }
     });
+
 
     recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
+        // Aqui debe acumular el texto, pero no me queda claro como es capaz de mostrar todo el texto en la interfax
+        accumulatedText += transcript + " ";
         output.innerText += `\n${transcript}`;
-
-        // Subir texto transcrito a S3
-        const params = {
-            Bucket: "documentations3",
-            Key: `transcripcion-${Date.now()}.txt`, // Nombre dinámico
-            Body: transcript,
-            ContentType: "text/plain"
-        };
-
-        console.log("Subiendo archivo a S3...");
-        s3.upload(params, function (err, data) {
-            if (err) {
-                console.log("Error al subir archivo:", err);
-            } else {
-                console.log("Archivo subido con éxito:", data.Location);
-            }
-        });
     };
 
     recognition.onend = () => {
@@ -69,4 +62,24 @@ if (!SpeechRecognition) {
         output.innerText = `Error: ${event.error}`;
         isRecording = false;
     };
+
+    // Se agrego esta funcion para cargar
+    function subirTextoAS3(texto) {
+        const params = {
+            Bucket: "documentations3",
+            Key: `transcripcion-${Date.now()}.txt`, // Nombre dinámico
+            Body: texto,
+            ContentType: "text/plain"
+        };
+    
+        console.log("Subiendo archivo a S3...");
+        s3.upload(params, function (err, data) {
+            if (err) {
+                console.log("Error al subir archivo:", err);
+            } else {
+                console.log("Archivo subido con éxito:", data.Location);
+            }
+        });
+
+    }
 }
