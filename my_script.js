@@ -14,25 +14,32 @@ if (!SpeechRecognition) {
     const stopButton = document.getElementById("stopButton");
     const output = document.getElementById("output");
 
-    // Configuración de AWS (No pongas las credenciales aquí, usa Cognito o IAM Roles)
-    AWS.config.update({
-      accessKeyId: "",
-      secretAccessKey: "",
-      region: "us-east-1" // Ajusta según tu región
+    // Configuración de AWS con Cognito
+    AWS.config.region = "us-east-1"; // Reemplázalo con tu región
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: "us-east-1:eb1fa3d7-3756-4cf6-9027-9f30eeb538b1" 
     });
-    
-    // Ahora puedes crear la instancia de S3
-    const s3 = new AWS.S3();
 
-    
-    startButton.addEventListener("click", () => {
-        console.log("Botón de inicio clickeado");
-        if (isRecording) return;
-        isRecording = true;
-        accumulatedText = "";
-        recognition.start();
-        output.innerText = "Escuchando...";
-    });
+    // Obtener credenciales antes de crear el cliente S3
+    AWS.config.credentials.get((err) => {
+        if (err) {
+            console.error("Error obteniendo credenciales de Cognito", err);
+            return;
+        }
+        console.log("Credenciales obtenidas correctamente");
+
+        // 🔹 Crear instancia de S3 con credenciales temporales
+        const s3 = new AWS.S3();
+
+        startButton.addEventListener("click", () => {
+            console.log("Botón de inicio clickeado");
+            if (isRecording) return;
+            isRecording = true;
+            accumulatedText = "";
+            recognition.start();
+            output.innerText = "Escuchando...";
+        });
+
 
     stopButton.addEventListener("click", () => {
         if (!isRecording) return;
@@ -82,4 +89,5 @@ if (!SpeechRecognition) {
         });
 
     }
+  });
 }
