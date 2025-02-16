@@ -4,20 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reconocimiento de Voz</title>
-  <style>    
-    /* Establecer dimensiones mínimas para el popup */
+  <style>
+    /* Establecer dimensiones mínimas para el popup y estilo global */
     html, body {
-      min-width: 450px;
+      min-width: 100px;
       min-height: 120px;
       margin: 0;
       padding: 10px;
       font-family: sans-serif;
+      background-color: #191919; /* Fondo negro 25 en RGB */
+      color: #f1f1f1; /* Texto claro para contraste */
+    }
+
+    /* Estilo para el mensaje de bienvenida */
+    #welcome {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #welcome h1 {
+      font-size: 1.8em;
+      margin: 0;
+    }
+    #welcome p {
+      font-size: 1em;
+      margin: 5px 0 0;
+      color: #ccc;
     }
     
     /* Contenedor principal que agrupa las dos secciones */
     #groups-container {
       display: flex;
-      gap: 20px; /* Espacio entre las dos secciones */
+      gap: 10px; /* Espacio entre las dos secciones */
+      margin-bottom: 10px;
     }
 
     /* Estilo para cada grupo (Documentar / Ask) */
@@ -25,9 +43,16 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      border: 1px solid #ccc;
+      border: 1px solid #444; /* Borde más oscuro para contraste sutil */
       padding: 10px;
       border-radius: 5px;
+      background-color: #242424; /* Fondo ligeramente más claro para los contenedores */
+    }
+
+    /* Estilo para los títulos de cada grupo */
+    .group h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.2em;
     }
 
     /* Contenedor para los botones de cada grupo */
@@ -36,9 +61,54 @@
       gap: 10px; /* Espacio entre los botones */
       margin-top: 5px;
     }
+
+    /* Estilo para los botones */
+    button {
+      padding: 8px 12px;
+      font-size: 0.9em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    /* Estilo para el botón de iniciar grabación */
+    #startButton {
+      background-color: #3a8dde;
+      color: #fff;
+    }
+    
+    /* Estilo para el botón de detener grabación */
+    #stopButton {
+      background-color: #d9534f;
+      color: #fff;
+    }
+    
+    /* Estilos para los botones de Ask */
+    #askButton {
+      background-color: #5cb85c;
+      color: #fff;
+    }
+    
+    /* Efecto hover para botones */
+    button:hover {
+      opacity: 0.9;
+    }
+    
+    /* Estilo para el párrafo de salida */
+    #output {
+      margin-top: 15px;
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
+  <!-- Mensaje de bienvenida -->
+  <div id="welcome">
+    <h1>Welcome 📝</h1>
+    <p>Document Smarter, Work Better</p>
+  </div>
+
   <div id="groups-container">
     <!-- Grupo de Documentar -->
     <div class="group">
@@ -52,12 +122,12 @@
     <div class="group">
       <h2>Ask</h2>
       <div class="button-container">
-        <button id="askButton">Ask Button</button>
-        <button id="askButton">Ask Button</button>
+        <button id="askButton">Ask Button 1</button>
+        <button id="askButton">Ask Button 2</button>
       </div>
     </div>
   </div>
-  <p id="output">Presiona el botón para iniciar</p>
+  <p id="output">Press the button to start.</p>
 
   <script src="aws-sdk.min.js"></script>
   <script src="my_script.js"></script>
