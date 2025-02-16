@@ -4,24 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reconocimiento de Voz</title>
-  <style>    /* Establecer dimensiones mínimas para el popup */
+  <style>    
+    /* Establecer dimensiones mínimas para el popup */
     html, body {
-      min-width: 300px;
-      min-height: 200px;
+      min-width: 450px;
+      min-height: 120px;
       margin: 0;
       padding: 10px;
       font-family: sans-serif;
     }
+    
+    /* Contenedor principal que agrupa las dos secciones */
+    #groups-container {
+      display: flex;
+      gap: 20px; /* Espacio entre las dos secciones */
+    }
+
+    /* Estilo para cada grupo (Documentar / Ask) */
+    .group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    /* Contenedor para los botones de cada grupo */
+    .button-container {
+      display: flex;
+      gap: 10px; /* Espacio entre los botones */
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
-  <div>
-    <h2>Document</h2>
-    
-    <button id="startButton">Start Recording</button>
-    <button id="stopButton">Stop Recording</button>
-    <p id="output">Presiona el botón para iniciar</p>
+  <div id="groups-container">
+    <!-- Grupo de Documentar -->
+    <div class="group">
+      <h2>Document</h2>
+      <div class="button-container">
+        <button id="startButton">Start Recording</button>
+        <button id="stopButton">Stop Recording</button>
+      </div>
+    </div>    
+    <!-- Grupo de Ask -->
+    <div class="group">
+      <h2>Ask</h2>
+      <div class="button-container">
+        <button id="askButton">Ask Button</button>
+        <button id="askButton">Ask Button</button>
+      </div>
+    </div>
   </div>
+  <p id="output">Presiona el botón para iniciar</p>
+
   <script src="aws-sdk.min.js"></script>
   <script src="my_script.js"></script>
 </body>
