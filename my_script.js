@@ -37,7 +37,7 @@ if (!SpeechRecognition) {
             isRecording = true;
             accumulatedText = "";
             recognition.start();
-            output.innerText = "Escuchando...";
+            output.innerText = "🔴Listening...";
         });
 
 
@@ -45,7 +45,7 @@ if (!SpeechRecognition) {
         if (!isRecording) return;
         isRecording = false;
         recognition.stop();
-        output.innerText += "\nGrabación detenida.";
+        output.innerText += "\n✅Your knowledge has been saved.";
 
         // Aqui debe estar el condicional pero no se porque
         if (accumulatedText.trim() !== "") {
