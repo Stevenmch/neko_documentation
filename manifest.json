@@ -3,8 +3,20 @@
   "name": "Voice to Text",
   "version": "1.0",
   "description": "Convierte la voz a texto usando Web Speech API.",
+  "side_panel": {
+    "default_path": "panel.html"
+  },
   "action": {
-    "default_popup": "popup.html"
+    "default_title": "Neko: Document Smarter, Work Better"
+  },
+  "permissions": ["sidePanel", "tabs"],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+B",
+        "mac": "Command+B"
+      }
+    }
   },
   "content_security_policy": {
   "extension_pages": "script-src 'self'; object-src 'self';"
