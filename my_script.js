@@ -9,10 +9,14 @@ if (!SpeechRecognition) {
     recognition.interimResults = false;
 
     let isRecording = false;
+    let isRecordingAsk = false;
     let accumulatedText = "";
     const startButton = document.getElementById("startButton");
     const stopButton = document.getElementById("stopButton");
     const output = document.getElementById("output");
+    const askStartButton = document.getElementById("askStartButton"); 
+    const askStopButton = document.getElementById("askStopButton"); 
+
 
     // Configuración de AWS con Cognito
     AWS.config.region = "us-east-1"; // Reemplázalo con tu región
@@ -28,19 +32,17 @@ if (!SpeechRecognition) {
         }
         console.log("Credenciales obtenidas correctamente");
 
-        // 🔹 Crear instancia de S3 con credenciales temporales
-        const s3 = new AWS.S3();
+    // 🔹 Crear instancia de S3 con credenciales temporales
+    const s3 = new AWS.S3();
 
-        startButton.addEventListener("click", () => {
-            console.log("Botón de inicio clickeado");
-            if (isRecording) return;
-            isRecording = true;
-            accumulatedText = "";
-            recognition.start();
-            output.innerText = "🔴Listening...";
-        });
-
-
+    startButton.addEventListener("click", () => {
+        console.log("Botón de inicio clickeado");
+        if (isRecording || isRecordingAsk) return;
+        isRecording = true;
+        accumulatedText = "";
+        recognition.start();
+        output.innerText = "🔴Listening...";
+    });
     stopButton.addEventListener("click", () => {
         if (!isRecording) return;
         isRecording = false;
@@ -53,6 +55,20 @@ if (!SpeechRecognition) {
         }
     });
 
+    // Función para los botones de "Ask"
+    askStartButton.addEventListener("click", () => {
+        if (isRecordingAsk || isRecording) return;
+        isRecordingAsk = true;
+        accumulatedText = "";
+        recognition.start();
+        output.innerText = "🔊 Recording (Ask Mode)...";
+    });
+    askStopButton.addEventListener("click", () => {
+        if (!isRecordingAsk) return;
+        isRecordingAsk = false;
+        recognition.stop();
+        output.innerText += "\n📝 Ask Mode transcription saved.";
+    });
 
     recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
@@ -62,12 +78,13 @@ if (!SpeechRecognition) {
     };
 
     recognition.onend = () => {
-        if (isRecording) recognition.start();
+        if (isRecording || isRecordingAsk) recognition.start();
     };
 
     recognition.onerror = (event) => {
         output.innerText = `Error: ${event.error}`;
         isRecording = false;
+        isRecordingAsk = false;
     };
 
     // Se agrego esta funcion para cargar
