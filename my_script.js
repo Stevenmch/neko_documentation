@@ -35,6 +35,51 @@ if (!SpeechRecognition) {
     // 🔹 Crear instancia de S3 con credenciales temporales
     const s3 = new AWS.S3();
 
+    // Funciones
+    function listS3Objects() {
+        const params = {
+            Bucket: 'documentations3' 
+            };
+        return new Promise((resolve, reject) => {
+            s3.listObjectsV2(params, (err, data) => {
+                if (err) {
+                reject(err);
+                } else {
+                const keys = data.Contents.map(item => item.Key);
+                resolve(keys);
+                }
+            });
+            });
+        };
+    function getS3Object(fileName) {
+        const params = {
+            Bucket: 'documentations3',
+            Key: fileName
+        };
+        
+        return new Promise((resolve, reject) => {
+            s3.getObject(params, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data.Body.toString('utf-8')); // Convertimos el buffer a string
+            }
+            });
+        });
+        }
+    async function getAllFilesContent() {
+        try {
+            const files = await listS3Objects(); // Obtener lista de archivos
+            const contentArray = await Promise.all(files.map(getS3Object)); // Leer archivos
+            return contentArray.join("\n\n"); // Unir todo el texto
+        } catch (error) {
+            console.error("Error al obtener archivos:", error);
+            return "";
+        }
+        }
+          
+          
+
     startButton.addEventListener("click", () => {
         console.log("Botón de inicio clickeado");
         if (isRecording || isRecordingAsk) return;
@@ -63,11 +108,26 @@ if (!SpeechRecognition) {
         recognition.start();
         output.innerText = "🔊 Recording (Ask Mode)...";
     });
-    askStopButton.addEventListener("click", () => {
+    askStopButton.addEventListener("click", async () => {
         if (!isRecordingAsk) return;
         isRecordingAsk = false;
         recognition.stop();
-        output.innerText += "\n📝 Ask Mode transcription saved.";
+        try {
+            // Obtener el texto de todos los archivos en S3
+            const text = await getAllFilesContent();
+                
+            // Mostrar el contenido en la interfaz
+            output.innerText += "\nContenido de S3:\n" + text;
+            
+            // Aquí podrías enviarlo a ChatGPT si lo deseas
+            // const respuesta = await askChatGPT(text);
+            // output.innerText += "\nRespuesta de ChatGPT:\n" + respuesta;
+            
+        } catch (error) {
+            output.innerText += "\nError al obtener los archivos: " + error;
+        }
+
+        
     });
 
     recognition.onresult = (event) => {
@@ -95,7 +155,7 @@ if (!SpeechRecognition) {
             Body: texto,
             ContentType: "text/plain"
         };
-    
+
         console.log("Subiendo archivo a S3...");
         s3.upload(params, function (err, data) {
             if (err) {
