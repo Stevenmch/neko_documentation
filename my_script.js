@@ -115,9 +115,13 @@ if (!SpeechRecognition) {
         try {
             // Obtener el texto de todos los archivos en S3
             const text = await getAllFilesContent();
-                
-            // Mostrar el contenido en la interfaz
-            output.innerText += "\nContenido de S3:\n" + text;
+               
+            if (!text || text.trim() === ""){
+                output.innerText = "\nNo documents found, Start documenting your knowledge now!";
+            } else{
+                // Mostrar el contenido en la interfaz
+                output.innerText += "\nContenido de S3:\n" + text;
+            }
             
             // Aquí podrías enviarlo a ChatGPT si lo deseas
             // const respuesta = await askChatGPT(text);
