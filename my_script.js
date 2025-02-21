@@ -160,7 +160,15 @@ if (!SpeechRecognition) {
                 //output.innerText += "\nContenido de S3:\n" + text;
 
                 askChatGPT(documentationText, accumulatedText)
-                    .then(answer => {output.innerText += "\nAnswer:\n" + answer})
+                    .then(answer => {
+                        output.innerText += "\nAnswer:\n" + answer
+                        // Convertir text to speach
+                        // Objeto
+                        const utterance = new SpeechSynthesisUtterance(answer);
+                        utterance.lang = "es-ES"; // Cambia según el idioma ("en-US" para inglés, "es-ES" para español)
+                        //lee en voz alta el mensaje
+                        speechSynthesis.speak(utterance);
+                    })
                     .catch(error => console.error(error));
             }
             
