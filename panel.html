@@ -47,7 +47,20 @@
       padding: 10px;
       border-radius: 5px;
       background-color: #242424; /* Fondo ligeramente más claro para los contenedores */
+      position: relative;
     }
+
+    /* Icono trash en la parte superior derecha (solo para Document) */
+    .document-delete-icon {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }  
+    .delete-icon-img {
+      width: 16px;  /* Tamaño de la imagen */
+      height: 16px;
+      cursor: pointer;
+    } 
 
     /* Estilo para los títulos de cada grupo */
     .group h2 {
@@ -117,6 +130,9 @@
   <div id="groups-container">
     <!-- Grupo de Documentar -->
     <div class="group">
+      <div class="document-delete-icon">
+        <img src="trash-open.png" alt="Delete" class="delete-icon-img">
+      </div>      
       <h2>Document</h2>
       <div class="button-container">
         <button id="startButton">Start Recording</button>
