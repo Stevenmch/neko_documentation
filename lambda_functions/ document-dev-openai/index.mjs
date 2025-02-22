@@ -46,6 +46,9 @@ async function askChatGPT(documentationText, userQuestion, apiKey_cleaned) {
     }
 }
 
+//const documentationText = "El codigo fue diseñado para llamar a una lambda funcion y tener un servidor separado"
+//const userQuestion = "Cuales son las caracteristicas de un Fundador excepcional?"
+
 export const handler = async (event) => {
     try {
         const apiKey = await getOpenAIKey();
