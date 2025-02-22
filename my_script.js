@@ -77,42 +77,18 @@ if (!SpeechRecognition) {
             return "";
         }
         }
-          
-    async function askChatGPT(documentationText, userQuestion) {
-        const apiKey = ""; // Reemplaza con tu API key de OpenAI
-        const url = "https://api.openai.com/v1/chat/completions";
     
-        const headers = {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
-        };
-    
-        const body = JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [
-                { "role": "system", "content": "Eres un asistente experto en documentación técnica y un comunicador claro y didáctico. Responde de forma concisa y breve, manteniendo la información esencial." },
-                { "role": "user", "content": `Este es el texto de la documentación:\n${documentationText}\n\nPregunta: ${userQuestion}` }
-            ]
+    async function callOpenAI(documentationText, userQuestion) {
+        const response = await fetch("https://3zjuc0gp83.execute-api.us-east-1.amazonaws.com/document-dev-openai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ documentationText, userQuestion }) // ✅ Enviamos los dos valores esperados
         });
     
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: headers,
-                body: body
-            });
+        const data = await response.json();
+        return data.answer;
+    }
     
-            if (!response.ok) {
-                throw new Error(`Error en la API: ${response.statusText}`);
-            }
-    
-            const data = await response.json();
-            return data.choices[0].message.content;
-        } catch (error) {
-            console.error("Error al llamar a la API de OpenAI:", error);
-            return "Hubo un problema al obtener la respuesta.";
-        }
-    }      
 
     startButton.addEventListener("click", () => {
         console.log("Botón de inicio clickeado");
@@ -159,7 +135,7 @@ if (!SpeechRecognition) {
                 // Mostrar el contenido en la interfaz
                 //output.innerText += "\nContenido de S3:\n" + text;
 
-                askChatGPT(documentationText, accumulatedText)
+                callOpenAI(documentationText, accumulatedText)
                     .then(answer => {
                         output.innerText += "\nAnswer:\n" + answer
                         // Convertir text to speach
