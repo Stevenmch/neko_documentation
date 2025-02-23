@@ -17,22 +17,66 @@ if (!SpeechRecognition) {
     const askStartButton = document.getElementById("askStartButton"); 
     const askStopButton = document.getElementById("askStopButton"); 
 
-    // Popup o cuadro de dialogo al presionar el icono de la basura
+    // Declarar s3 globalmente para usarlo en el boton de trash-open
+    // Configuración de AWS con Cognito
+    AWS.config.region = "us-east-1"; // Reemplázalo con tu región
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: "us-east-1:eb1fa3d7-3756-4cf6-9027-9f30eeb538b1" 
+    });
+    const s3 = new AWS.S3();
+
+      
+
+    // Icono para eliminar todo del S3
     document.addEventListener("DOMContentLoaded", function () {
-        // Seleccionar el icono de la papelera
         const deleteIcon = document.querySelector(".document-delete-icon");
+        // Verifica si el clic fue en el icono de eliminar
         if (deleteIcon) {
-            deleteIcon.addEventListener("click", function () {
-            // Mostrar un popup de confirmación
-            const confirmDelete = confirm("😯 Are you sure you want to delete everything you have documented?\n\n🛑 Everything you have ever documented will be deleted.");
-            
-            if (confirmDelete) {
-                alert("✅ Document deleted."); // Aquí puedes agregar la lógica de eliminación real
-            }
+            deleteIcon.addEventListener("click", function(){
+                const confirmDelete = confirm("😯 Are you sure you want to delete everything you have documented?\n\n🛑 Everything you have ever documented will be deleted.");
+                if (confirmDelete){
+                    deleteS3Data()
+                    .then(() => {
+                        alert("✅ All documents have been deleted successfully.");
+                    })
+                    .catch(error => {
+                        alert("❌ Error deleting documents: " + error.message);
+                    });
+                }
             });
         }
     });
-      
+
+    // Funcion para eliminar datos de mi s3
+    async function deleteS3Data() {
+        const bucketName = "documentations3";
+    
+        try {
+            // Obtener la lista de objetos en el bucket
+            const objects = await s3.listObjectsV2({ Bucket: bucketName }).promise();
+            
+            // Si no existe contenido o si es null 
+            if (!objects.Contents || objects.Contents.length === 0) {
+                alert("No hay datos para eliminar.");
+                return;
+            }
+    
+            // Construir la lista de objetos a eliminar
+            const objectsToDelete = objects.Contents.map(obj => ({ Key: obj.Key }));
+            console.log("📂 Objetos encontrados en S3:", objectsToDelete);
+            // Eliminar los objetos
+            const deleteResponse = await s3.deleteObjects({
+                Bucket: bucketName,
+                Delete: { Objects: objectsToDelete }
+            }).promise();
+            console.log("✅ Respuesta de eliminación:", deleteResponse);
+    
+            alert("Todos los documentos han sido eliminados exitosamente.");
+        } catch (error) {
+            console.error("Error eliminando datos:", error);
+            alert("Hubo un error al intentar eliminar los datos.");
+        }
+    }
 
     // Configuración de AWS con Cognito
     AWS.config.region = "us-east-1"; // Reemplázalo con tu región
@@ -83,6 +127,7 @@ if (!SpeechRecognition) {
             });
         });
         }
+    
     async function getAllFilesContent() {
         try {
             const files = await listS3Objects(); // Obtener lista de archivos
@@ -104,8 +149,9 @@ if (!SpeechRecognition) {
         const data = await response.json();
         return data.answer;
     }
-    
 
+
+    
     startButton.addEventListener("click", () => {
         console.log("Botón de inicio clickeado");
         if (isRecording || isRecordingAsk) return;
