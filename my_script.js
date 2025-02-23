@@ -17,6 +17,22 @@ if (!SpeechRecognition) {
     const askStartButton = document.getElementById("askStartButton"); 
     const askStopButton = document.getElementById("askStopButton"); 
 
+    // Popup o cuadro de dialogo al presionar el icono de la basura
+    document.addEventListener("DOMContentLoaded", function () {
+        // Seleccionar el icono de la papelera
+        const deleteIcon = document.querySelector(".document-delete-icon");
+        if (deleteIcon) {
+            deleteIcon.addEventListener("click", function () {
+            // Mostrar un popup de confirmación
+            const confirmDelete = confirm("😯 Are you sure you want to delete everything you have documented?\n\n🛑 Everything you have ever documented will be deleted.");
+            
+            if (confirmDelete) {
+                alert("✅ Document deleted."); // Aquí puedes agregar la lógica de eliminación real
+            }
+            });
+        }
+    });
+      
 
     // Configuración de AWS con Cognito
     AWS.config.region = "us-east-1"; // Reemplázalo con tu región
@@ -150,9 +166,7 @@ if (!SpeechRecognition) {
             
         } catch (error) {
             output.innerText += "\nError al obtener los archivos: " + error;
-        }
-
-        
+        }       
     });
 
     recognition.onresult = (event) => {
