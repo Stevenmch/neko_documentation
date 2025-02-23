@@ -32,16 +32,14 @@ if (!SpeechRecognition) {
         const deleteIcon = document.querySelector(".document-delete-icon");
         // Verifica si el clic fue en el icono de eliminar
         if (deleteIcon) {
-            deleteIcon.addEventListener("click", function(){
+            deleteIcon.addEventListener("click", async function(){
                 const confirmDelete = confirm("😯 Are you sure you want to delete everything you have documented?\n\n🛑 Everything you have ever documented will be deleted.");
                 if (confirmDelete){
-                    deleteS3Data()
-                    .then(() => {
+                    const successDeleted = await deleteS3Data();
+                    
+                    if (successDeleted){
                         alert("✅ All documents have been deleted successfully.");
-                    })
-                    .catch(error => {
-                        alert("❌ Error deleting documents: " + error.message);
-                    });
+                    }
                 }
             });
         }
@@ -58,7 +56,7 @@ if (!SpeechRecognition) {
             // Si no existe contenido o si es null 
             if (!objects.Contents || objects.Contents.length === 0) {
                 alert("No hay datos para eliminar.");
-                return;
+                return false;
             }
     
             // Construir la lista de objetos a eliminar
@@ -69,12 +67,21 @@ if (!SpeechRecognition) {
                 Bucket: bucketName,
                 Delete: { Objects: objectsToDelete }
             }).promise();
-            console.log("✅ Respuesta de eliminación:", deleteResponse);
-    
-            alert("Todos los documentos han sido eliminados exitosamente.");
+            console.log("Respuesta de eliminación:", deleteResponse);
+            
+            // Verificar si hubo errores en la eliminación
+            if (deleteResponse.Errors && deleteResponse.Errors.length > 0) {
+                console.error("❌ Algunos archivos no pudieron eliminarse:", deleteResponse.Errors);
+                alert("There was an error deleting some files.");
+                return false;
+            } else {
+                return true;
+            }
+
         } catch (error) {
             console.error("Error eliminando datos:", error);
             alert("Hubo un error al intentar eliminar los datos.");
+            return false;
         }
     }
 
