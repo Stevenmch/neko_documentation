@@ -17,6 +17,15 @@ if (!SpeechRecognition) {
     const askStartButton = document.getElementById("askStartButton"); 
     const askStopButton = document.getElementById("askStopButton"); 
 
+    // Obtener session_id almacenado anteriormente en el localstorage
+    let sessionId = localStorage.getItem("session_id");
+
+    if (!sessionId) {
+        sessionId = crypto.randomUUID();  // Genera un ID único
+        localStorage.setItem("session_id", sessionId);  // Guarda el ID en el navegador
+    }
+    console.log("Session ID:", sessionId);
+    
     // Declarar s3 globalmente para usarlo en el boton de trash-open
     // Configuración de AWS con Cognito
     AWS.config.region = "us-east-1"; // Reemplázalo con tu región
