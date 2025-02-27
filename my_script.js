@@ -33,8 +33,7 @@ if (!SpeechRecognition) {
         IdentityPoolId: "us-east-1:eb1fa3d7-3756-4cf6-9027-9f30eeb538b1" 
     });
     const s3 = new AWS.S3();
-
-      
+   
 
     // Icono para eliminar todo del S3
     document.addEventListener("DOMContentLoaded", function () {
@@ -250,9 +249,15 @@ if (!SpeechRecognition) {
 
     // Se agrego esta funcion para cargar
     function subirTextoAS3(texto) {
+        // Obtener sesion id
+        let sessionId = localStorage.getItem("session_id");
+
+        const folder_s3 = `anonymous/${sessionId}/project1/`
+        const fileName = `transcripcion-${Date.now()}.txt`;
+        const folderFullPath = `${folder_s3}${fileName}`
         const params = {
             Bucket: "documentations3",
-            Key: `transcripcion-${Date.now()}.txt`, // Nombre dinámico
+            Key: folderFullPath, // Nombre dinámico
             Body: texto,
             ContentType: "text/plain"
         };
