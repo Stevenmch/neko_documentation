@@ -56,19 +56,25 @@ if (!SpeechRecognition) {
     // Funcion para eliminar datos de mi s3
     async function deleteS3Data() {
         const bucketName = "documentations3";
+        const folderPath = `anonymous/${sessionId}/project1/`;
     
         try {
             // Obtener la lista de objetos en el bucket
-            const objects = await s3.listObjectsV2({ Bucket: bucketName }).promise();
+            const objects = await s3.listObjectsV2({ 
+                Bucket: bucketName,
+                Prefix: folderPath }).promise();
             
             // Si no existe contenido o si es null 
             if (!objects.Contents || objects.Contents.length === 0) {
                 alert("No hay datos para eliminar.");
                 return false;
             }
-    
-            // Construir la lista de objetos a eliminar
-            const objectsToDelete = objects.Contents.map(obj => ({ Key: obj.Key }));
+            
+            // Filtrar solo archivos dentro de project1/ (asegurar que no borra el folder padre)
+            const objectsToDelete = objects.Contents
+            .filter(obj => obj.Key.startsWith(folderPath)) // Asegurar que son de project1/
+            .map(obj => ({ Key: obj.Key }));
+
             console.log("📂 Objetos encontrados en S3:", objectsToDelete);
             // Eliminar los objetos
             const deleteResponse = await s3.deleteObjects({
@@ -113,7 +119,8 @@ if (!SpeechRecognition) {
     // Funciones
     function listS3Objects() {
         const params = {
-            Bucket: 'documentations3' 
+            Bucket: 'documentations3',
+            Prefix: `anonymous/${sessionId}/project1/`
             };
         return new Promise((resolve, reject) => {
             s3.listObjectsV2(params, (err, data) => {
@@ -127,9 +134,11 @@ if (!SpeechRecognition) {
             });
         };
     function getS3Object(fileName) {
+        // Obtener sesion id
         const params = {
             Bucket: 'documentations3',
             Key: fileName
+        
         };
         
         return new Promise((resolve, reject) => {
@@ -146,6 +155,7 @@ if (!SpeechRecognition) {
     async function getAllFilesContent() {
         try {
             const files = await listS3Objects(); // Obtener lista de archivos
+            console.log(files)
             const contentArray = await Promise.all(files.map(getS3Object)); // Leer archivos
             return contentArray.join("\n\n"); // Unir todo el texto
         } catch (error) {
