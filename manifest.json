@@ -8,13 +8,16 @@
     "48": "icons/Cat48.png",
     "128": "icons/Cat128.png"
   },
+  "background": {
+    "service_worker": "service-worker.js"
+  },
   "side_panel": {
     "default_path": "panel.html"
   },
   "action": {
     "default_title": "Neko: Document Smarter, Work Better"
   },
-  "permissions": ["sidePanel", "tabs"],
+  "permissions": ["sidePanel"],
   "commands": {
     "_execute_action": {
       "suggested_key": {
