@@ -17,7 +17,7 @@
   "action": {
     "default_title": "Neko: Document Smarter, Work Better"
   },
-  "permissions": ["sidePanel"],
+  "permissions": ["sidePanel","scripting","activeTab","storage"],
   "commands": {
     "_execute_action": {
       "suggested_key": {
@@ -26,6 +26,13 @@
       }
     }
   },
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["mic.html", "mic.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "content_security_policy": {
   "extension_pages": "script-src 'self'; object-src 'self';"
   }
