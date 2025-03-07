@@ -175,26 +175,36 @@ if (!SpeechRecognition) {
         return data.answer;
     }
 
-
+    async function checkMicrophoneAccess() {
+        try {
+            // Revisa si el usuario permitio el acceso al microfono
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     
-    startButton.addEventListener("click", () => {
+            // Cerrar el stream inmediatamente para liberar el micrófono
+            stream.getTracks().forEach(track => track.stop());
+    
+            console.log("Micrófono disponible");
+            return true;
+        } catch (error) {
+            console.log("Micrófono NO disponible:", error);
+            return false;
+        }
+    }
+    startButton.addEventListener("click", async () => {
         console.log("Botón de inicio clickeado");
         if (isRecording || isRecordingAsk) return;
-        // Verificamos el estado del micrófono en chrome.storage
-        chrome.storage.local.get("micPermission", (data) => {
-            if (data.micPermission == true)
-            {
-                isRecording = true;
-                accumulatedText = "";
-                recognition.start();
-                output.innerText = "🔴Listening...";
-            }
-            else{
-                // Solicitar permiso
-                chrome.tabs.create({ url: chrome.runtime.getURL("mic.html") })
-            }
-        });
-
+    
+        const isAllowed = await checkMicrophoneAccess();
+    
+        if (isAllowed) {
+            isRecording = true;
+            accumulatedText = "";
+            recognition.start();
+            output.innerText = "🔴 Listening...";
+        } else {
+            // Si el micrófono no está disponible, abrir mic.html
+            chrome.tabs.create({ url: chrome.runtime.getURL("mic.html") });
+        }
     });
     stopButton.addEventListener("click", () => {
         if (!isRecording) return;
@@ -207,34 +217,21 @@ if (!SpeechRecognition) {
             subirTextoAS3(accumulatedText); // Subir solo cuando se detiene
         }
     });
-
-    async function requestMicrophone() {
-        try {
-            await navigator.mediaDevices.getUserMedia({ audio: true });
-            console.log("✅ Micrófono permitido");
-            window.parent.postMessage({ microphone: "granted" }, "*");
-        } catch (error) {
-            console.log(error);
-            window.parent.postMessage({ microphone: "denied" }, "*");
-        }
-    }
     // Función para los botones de "Ask"
-    askStartButton.addEventListener("click", () => {
+    askStartButton.addEventListener("click", async () => {
         if (isRecordingAsk || isRecording) return;
-        // Verificamos el estado del micrófono en chrome.storage
-        chrome.storage.local.get("micPermission", (data) => {
-            if (data.micPermission == true)
-            {
-                isRecordingAsk = true;
-                accumulatedText = "";
-                recognition.start();
-                output.innerText = "🔊 Recording (Ask Mode)...";
-            }
-            else{
-                // Solicitar permiso
-                chrome.tabs.create({ url: chrome.runtime.getURL("mic.html") })
-            }
-        });
+
+        const isAllowed = await checkMicrophoneAccess();
+
+        if (isAllowed) {
+            isRecordingAsk = true;
+            accumulatedText = "";
+            recognition.start();
+            output.innerText = "🔊 Recording (Ask Mode)...";
+        } else {
+            // Solicitar permiso
+            chrome.tabs.create({ url: chrome.runtime.getURL("mic.html") })
+        }          
     });
     askStopButton.addEventListener("click", async () => {
         if (!isRecordingAsk) return;
