@@ -180,10 +180,21 @@ if (!SpeechRecognition) {
     startButton.addEventListener("click", () => {
         console.log("Botón de inicio clickeado");
         if (isRecording || isRecordingAsk) return;
-        isRecording = true;
-        accumulatedText = "";
-        recognition.start();
-        output.innerText = "🔴Listening...";
+        // Verificamos el estado del micrófono en chrome.storage
+        chrome.storage.local.get("micPermission", (data) => {
+            if (data.micPermission == true)
+            {
+                isRecording = true;
+                accumulatedText = "";
+                recognition.start();
+                output.innerText = "🔴Listening...";
+            }
+            else{
+                // Solicitar permiso
+                chrome.tabs.create({ url: chrome.runtime.getURL("mic.html") })
+            }
+        });
+
     });
     stopButton.addEventListener("click", () => {
         if (!isRecording) return;
@@ -224,12 +235,6 @@ if (!SpeechRecognition) {
                 chrome.tabs.create({ url: chrome.runtime.getURL("mic.html") })
             }
         });
-        //chrome.tabs.create({ url: chrome.runtime.getURL("mic.html") });
-        //requestMicrophone();
-        //isRecordingAsk = true;
-        //accumulatedText = "";
-        //recognition.start();
-        //output.innerText = "🔊 Recording (Ask Mode)...";
     });
     askStopButton.addEventListener("click", async () => {
         if (!isRecordingAsk) return;
