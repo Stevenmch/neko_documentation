@@ -18,13 +18,48 @@ if (!SpeechRecognition) {
     const askStopButton = document.getElementById("askStopButton"); 
 
     // Obtener session_id almacenado anteriormente en el localstorage
-    let sessionId = localStorage.getItem("session_id");
+    let userId = localStorage.getItem("userId");
+    if (!userId) {
+        userId = crypto.randomUUID();  // Genera un ID único
+        localStorage.setItem("userId", userId);  // Guarda el ID en el navegador
+    }
+    console.log("User ID:", userId);
+
+    // Generar un session_id único para la sesión actual
+    let sessionId = sessionStorage.getItem("sessionId");
 
     if (!sessionId) {
-        sessionId = crypto.randomUUID();  // Genera un ID único
-        localStorage.setItem("session_id", sessionId);  // Guarda el ID en el navegador
+        sessionId = crypto.randomUUID();  // Genera un ID único por sesión
+        sessionStorage.setItem("sessionId", sessionId);  // Guarda el ID en sessionStorage
     }
-    console.log("Session ID:", sessionId);
+    // Metrica inicio sesion
+    async function sendDataToLambdaStart(user_id_params,event_type_params, session_id_params) {
+        const url = "https://7kwity81l3.execute-api.us-east-1.amazonaws.com/dev";
+    
+        const data = {
+            user_id: user_id_params,
+            event_type: event_type_params,
+            session_id: session_id_params
+        };
+    
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+    
+            const result = await response.json();
+            console.log("Respuesta de Lambda:", result);
+        } catch (error) {
+            console.error("Error enviando datos a Lambda:", error);
+        }
+    }
+    sendDataToLambdaStart(userId,"Start Session",sessionId);
+    
+
     
     // Declarar s3 globalmente para usarlo en el boton de trash-open
     // Configuración de AWS con Cognito
@@ -56,7 +91,7 @@ if (!SpeechRecognition) {
     // Funcion para eliminar datos de mi s3
     async function deleteS3Data() {
         const bucketName = "documentations3";
-        const folderPath = `anonymous/${sessionId}/project1/`;
+        const folderPath = `anonymous/${userId}/project1/`;
     
         try {
             // Obtener la lista de objetos en el bucket
@@ -120,7 +155,7 @@ if (!SpeechRecognition) {
     function listS3Objects() {
         const params = {
             Bucket: 'documentations3',
-            Prefix: `anonymous/${sessionId}/project1/`
+            Prefix: `anonymous/${userId}/project1/`
             };
         return new Promise((resolve, reject) => {
             s3.listObjectsV2(params, (err, data) => {
@@ -190,6 +225,32 @@ if (!SpeechRecognition) {
             return false;
         }
     }
+
+    async function sendDataToLambda(user_id_params,event_type_params, session_id_params) {
+        const url = "https://7kwity81l3.execute-api.us-east-1.amazonaws.com/dev";
+    
+        const data = {
+            user_id: user_id_params,
+            event_type: event_type_params,
+            session_id: session_id_params
+        };
+    
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+    
+            const result = await response.json();
+            console.log("Respuesta de Lambda:", result);
+        } catch (error) {
+            console.error("Error enviando datos a Lambda:", error);
+        }
+    }
+
     startButton.addEventListener("click", async () => {
         console.log("Botón de inicio clickeado");
         if (isRecording || isRecordingAsk) return;
@@ -215,6 +276,8 @@ if (!SpeechRecognition) {
         // Aqui debe estar el condicional pero no se porque
         if (accumulatedText.trim() !== "") {
             subirTextoAS3(accumulatedText); // Subir solo cuando se detiene
+            // Metrica Documentar
+            sendDataToLambda(userId,"Document",sessionId);
         }
     });
     // Función para los botones de "Ask"
@@ -246,6 +309,8 @@ if (!SpeechRecognition) {
                
             if (!documentationText || documentationText.trim() === ""){
                 output.innerText += "\nNo documents found, Start documenting your knowledge now!";
+                // Metrica Documentar
+                sendDataToLambda(userId,"Ask",sessionId);
             } else{
                 // Mostrar el contenido en la interfaz
                 //output.innerText += "\nContenido de S3:\n" + text;
@@ -261,6 +326,8 @@ if (!SpeechRecognition) {
                         speechSynthesis.speak(utterance);
                     })
                     .catch(error => console.error(error));
+                // Metrica Documentar
+                sendDataToLambda(userId,"Ask",sessionId);
             }
             
         } catch (error) {
@@ -288,9 +355,9 @@ if (!SpeechRecognition) {
     // Se agrego esta funcion para cargar
     function subirTextoAS3(texto) {
         // Obtener sesion id
-        let sessionId = localStorage.getItem("session_id");
+        let userId = localStorage.getItem("userId");
 
-        const folder_s3 = `anonymous/${sessionId}/project1/`
+        const folder_s3 = `anonymous/${userId}/project1/`
         const fileName = `transcripcion-${Date.now()}.txt`;
         const folderFullPath = `${folder_s3}${fileName}`
         const params = {
