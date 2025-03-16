@@ -26,7 +26,7 @@
       }
     }
   },
-  "host_permissions": ["http://*/*", "https://*/*"],
+  "host_permissions": ["https://rds.amazonaws.com/","https://sts.amazonaws.com/"],
   "web_accessible_resources": [
     {
       "resources": ["mic.html", "mic.js"],
@@ -37,4 +37,3 @@
   "extension_pages": "script-src 'self'; object-src 'self';"
   }
 }
-
