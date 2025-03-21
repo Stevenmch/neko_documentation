@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Neko",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Documentar es tedioso. Esta extensión lo facilita: habla para documentar y pregunta para encontrar información. ¡Pruébala!",
   "icons": {
     "16": "icons/Cat16.png",
@@ -17,7 +17,7 @@
   "action": {
     "default_title": "Neko: Document Smarter, Work Better"
   },
-  "permissions": ["sidePanel","scripting","activeTab","storage"],
+  "permissions": ["sidePanel"],
   "commands": {
     "_execute_action": {
       "suggested_key": {
@@ -26,7 +26,6 @@
       }
     }
   },
-  "host_permissions": ["https://rds.amazonaws.com/","https://sts.amazonaws.com/"],
   "web_accessible_resources": [
     {
       "resources": ["mic.html", "mic.js"],
