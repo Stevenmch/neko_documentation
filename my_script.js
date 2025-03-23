@@ -9,11 +9,14 @@ if (!SpeechRecognition) {
     console.log("Idioma del usuario:", userLang);
     // Configurar el idioma de reconocimiento
     if (userLang.startsWith("es")) {
-        recognition.lang = "es-ES";
+        language = "es-ES"
+        recognition.lang = language;
     } else if (userLang.startsWith("en")) {
-        recognition.lang = "en-US";
+        language = "en-US"
+        recognition.lang = language;
     } else {
-        recognition.lang = "en-US"; // Inglés por defecto si el idioma no es español
+        language = "en-US"
+        recognition.lang = language; // Inglés por defecto si el idioma no es español
     }
 
     recognition.continuous = false;
@@ -210,11 +213,11 @@ if (!SpeechRecognition) {
         }
         }
     
-    async function callOpenAI(documentationText, userQuestion) {
-        const response = await fetch("https://3zjuc0gp83.execute-api.us-east-1.amazonaws.com/document-dev-openai", {
+    async function callOpenAI(documentationText, userQuestion, language) {
+        const response = await fetch("https://3zjuc0gp83.execute-api.us-east-1.amazonaws.com/prod/document-prod-openai", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ documentationText, userQuestion }) // ✅ Enviamos los dos valores esperados
+            body: JSON.stringify({ documentationText, userQuestion, language}) // ✅ Enviamos los dos valores esperados
         });
     
         const data = await response.json();
@@ -326,13 +329,13 @@ if (!SpeechRecognition) {
                 // Mostrar el contenido en la interfaz
                 //output.innerText += "\nContenido de S3:\n" + text;
 
-                callOpenAI(documentationText, accumulatedText)
+                callOpenAI(documentationText, accumulatedText, language)
                     .then(answer => {
                         output.innerText += "\nAnswer:\n" + answer
                         // Convertir text to speach
                         // Objeto
                         const utterance = new SpeechSynthesisUtterance(answer);
-                        utterance.lang = "es-ES"; // Cambia según el idioma ("en-US" para inglés, "es-ES" para español)
+                        utterance.lang = language; // Cambia según el idioma ("en-US" para inglés, "es-ES" para español)
                         //lee en voz alta el mensaje
                         speechSynthesis.speak(utterance);
                     })
