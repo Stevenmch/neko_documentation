@@ -4,7 +4,18 @@ if (!SpeechRecognition) {
     alert("Tu navegador no soporta el reconocimiento de voz.");
 } else {
     const recognition = new SpeechRecognition();
-    recognition.lang = "es-ES";
+    // Reconocer el lenguaje del usuario
+    let userLang = navigator.language || navigator.languages[0];  
+    console.log("Idioma del usuario:", userLang);
+    // Configurar el idioma de reconocimiento
+    if (userLang.startsWith("es")) {
+        recognition.lang = "es-ES";
+    } else if (userLang.startsWith("en")) {
+        recognition.lang = "en-US";
+    } else {
+        recognition.lang = "en-US"; // Inglés por defecto si el idioma no es español
+    }
+
     recognition.continuous = false;
     recognition.interimResults = false;
 
