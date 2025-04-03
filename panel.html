@@ -91,23 +91,51 @@
     #startButton {
       background-color: #fff;
       color: #000;
+      font-weight: 500;
     }
     
     /* Estilo para el botón de detener grabación */
     #stopButton {
       background-color: #333;
       color: #fff;
+      font-weight: 500;
     }
     
     /* Estilos para los botones de Ask */
     #askStartButton {
       background-color: #fff;
       color: #000;
+      font-weight: 500;
     }
     /* Estilos para los botones de Ask */
     #askStopButton {
       background-color: #333;
       color: #fff;
+      font-weight: 500;
+    }
+    #uploadButton {
+      display: flex; /* Para alinear ícono y texto */
+      align-items: center; /* Centra verticalmente */
+      justify-content: flex-start; /* Alinea a la izquierda */
+      gap: 6px; /* Espacio entre el icono y el texto */
+      background-color: #fff;
+      color: #000;
+      margin-top: 10px;
+      padding: 8px 12px;
+      font-size: 0.9em;
+      font-weight: 500;
+      width: 100%;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #uploadButton .icon {
+    width: 16px; /* Ajusta el tamaño del ícono */
+    height: 16px;
+    }
+    #uploadButton:hover {
+      background-color: #777;
     }
     
     /* Efecto hover para botones */
@@ -140,6 +168,10 @@
         <button id="startButton">Start Recording</button>
         <button id="stopButton">Stop Recording</button>
       </div>
+      <!-- Nuevo botón para subir archivo -->
+      <button id="uploadButton">
+        <img src="upload-file.svg" alt="Upload" class="icon"> Upload File
+      </button>
     </div>    
     <!-- Grupo de Ask -->
     <div class="group">
