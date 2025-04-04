@@ -36,6 +36,7 @@
     /* Contenedor principal que agrupa las dos secciones */
     #groups-container {
       display: flex;
+      justify-content: center; /* Centra los grupos horizontalmente */
       gap: 10px; /* Espacio entre las dos secciones */
       margin-bottom: 10px;
     }
@@ -113,31 +114,6 @@
       color: #fff;
       font-weight: 500;
     }
-    #uploadButton {
-      display: flex; /* Para alinear ícono y texto */
-      align-items: center; /* Centra verticalmente */
-      justify-content: flex-start; /* Alinea a la izquierda */
-      gap: 6px; /* Espacio entre el icono y el texto */
-      background-color: #fff;
-      color: #000;
-      margin-top: 10px;
-      padding: 8px 12px;
-      font-size: 0.9em;
-      font-weight: 500;
-      width: 100%;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    #uploadButton .icon {
-    width: 16px; /* Ajusta el tamaño del ícono */
-    height: 16px;
-    }
-    #uploadButton:hover {
-      background-color: #777;
-    }
-    
     /* Efecto hover para botones */
     button:hover {
       opacity: 0.9;
@@ -148,6 +124,76 @@
       margin-top: 15px;
       font-size: 1em;
     }
+
+    #drop-container {
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+      margin: 10px auto;
+    }
+
+    #drop-area {
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+      height: 150px;
+      border: 2px dashed #ccc;
+      background-color: #242424;
+      color: #f1f1f1;
+      margin: 10px auto;
+      padding: 10px;
+      overflow: auto;
+      white-space: pre-wrap;
+      cursor: text;
+      outline: none;
+    }
+
+    #placeholder-text {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #888;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity 0.2s ease;
+      font-size: 14px;
+    }
+
+    #placeholder-text.hidden {
+      opacity: 0;
+    }
+
+
+    /* Cuando el usuario pega código, el texto se alineará arriba */
+    #drop-area.filled {
+        align-items: flex-start;
+        justify-content: flex-start;
+        text-align: left;
+        padding: 5px;
+    }
+    #send-button {
+      width: 100%;
+      max-width: 350px;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: not-allowed;
+      background-color: #555;
+      color: #aaa;
+      transition: background 0.3s ease;
+      margin-bottom: 20px; /* Espacio debajo del botón */
+      display: block; /* Hace que el botón ocupe toda la línea */
+      margin-left: auto; /* Centrado horizontal */
+      margin-right: auto; /* Centrado horizontal */
+    }
+
+    #send-button.enabled {
+        cursor: pointer;
+        background-color: #4CAF50; /* Verde cuando está activo */
+        color: white;
+    }
   </style>
 </head>
 <body>
@@ -156,6 +202,13 @@
     <h1>Welcome 📝</h1>
     <p>Document Smarter, Work Better</p>
   </div>
+  <!-- Área para pegar código -->
+  <div id="drop-container">
+    <div id="drop-area" contenteditable="true"></div>
+    <span id="placeholder-text">Pega tu código aquí y se documentará automáticamente.</span>
+  </div>
+  <!-- Botón para enviar código -->
+  <button id="send-button" disabled>Generar Documentación</button>
 
   <div id="groups-container">
     <!-- Grupo de Documentar -->
@@ -168,10 +221,6 @@
         <button id="startButton">Start Recording</button>
         <button id="stopButton">Stop Recording</button>
       </div>
-      <!-- Nuevo botón para subir archivo -->
-      <button id="uploadButton">
-        <img src="upload-file.svg" alt="Upload" class="icon"> Upload File
-      </button>
     </div>    
     <!-- Grupo de Ask -->
     <div class="group">
@@ -186,5 +235,6 @@
 
   <script src="aws-sdk.min.js"></script>
   <script src="my_script.js"></script>
+  <script src="placeholder-handler.js"></script>
 </body>
 </html>
