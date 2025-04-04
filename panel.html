@@ -150,13 +150,16 @@
 
     #placeholder-text {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       color: #888;
       pointer-events: none;
       user-select: none;
       transition: opacity 0.2s ease;
-      font-size: 14px;
+      text-align: center;
+      width: 90%;
+      font-size: 1.1rem;
     }
 
     #placeholder-text.hidden {
@@ -205,7 +208,7 @@
   <!-- Área para pegar código -->
   <div id="drop-container">
     <div id="drop-area" contenteditable="true"></div>
-    <span id="placeholder-text">Pega tu código aquí y se documentará automáticamente.</span>
+    <span id="placeholder-text">Paste your code here and it will be automatically documented.</span>
   </div>
   <!-- Botón para enviar código -->
   <button id="send-button" disabled>Generar Documentación</button>
