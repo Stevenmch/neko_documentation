@@ -42,13 +42,21 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const result = await response.text();
-      console.log("Respuesta de la función:", result);
+      
+      // creamos el archivo Markdown
+      const blob = new Blob([result], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
 
-      // Aquí podrías mostrar el resultado en pantalla si quieres
-      alert("Documentación generada:\n\n" + result);
+      // Creamos el enlace de descarga
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'documentacion.md'; // nombre del archivo
+      a.click();
+
+      // Liberamos el objeto URL
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Error al enviar el código:", err);
-      alert("Hubo un error al generar la documentación.");
     }
     // Aquí podrías enviar el código a tu backend o a la API de ChatGPT
   });
